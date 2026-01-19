@@ -8,20 +8,34 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 2. 引入 llama.cpp 目录
 add_subdirectory(llama.cpp)
 
-# common: 官方示例中常用的工具类 (包含采样、加载模型等辅助函数)
-# file(GLOB LLAMA_COMMON_SRC llama.cpp/common/*.cpp)
-
 # 3. 添加可执行程序
-add_executable(main_app
-    src/main.cpp)
-
-# 4. 链接库
-# llama: 核心库 (llama.h 对应的实现)
-target_link_libraries(main_app PRIVATE llama)
-
-# 5. 如果需要包含 llama.cpp 内部的头文件路径
-target_include_directories(main_app PRIVATE
-    llama.cpp/include
-
-    # llama.cpp/common
+file(GLOB SRC_SUBDIRS
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    src/*
 )
+
+foreach(dir ${SRC_SUBDIRS})
+    # 只处理目录
+    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+        # 只匹配纯数字目录名
+        if(dir MATCHES "^src/[0-9]+$")
+            # 提取数字 N
+            string(REGEX REPLACE "^src/([0-9]+)$" "\\1" N ${dir})
+
+            set(TARGET_NAME main${N})
+            set(MAIN_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/main.cpp)
+
+            if(EXISTS ${MAIN_SRC})
+                add_executable(${TARGET_NAME} ${MAIN_SRC})
+
+                target_link_libraries(${TARGET_NAME} PRIVATE llama)
+
+                target_include_directories(${TARGET_NAME} PRIVATE
+                    ${CMAKE_CURRENT_SOURCE_DIR}/llama.cpp/include
+                )
+            else()
+                message(WARNING "Skip ${dir}: main.cpp not found")
+            endif()
+        endif()
+    endif()
+endforeach()
