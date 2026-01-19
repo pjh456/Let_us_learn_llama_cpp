@@ -14,6 +14,14 @@ file(GLOB SRC_SUBDIRS
     src/*
 )
 
+function(add_llama_example TARGET SRC)
+    add_executable(${TARGET} ${SRC})
+    target_link_libraries(${TARGET} PRIVATE llama)
+    target_include_directories(${TARGET} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/llama.cpp/include
+    )
+endfunction()
+
 foreach(dir ${SRC_SUBDIRS})
     # 只处理目录
     if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
@@ -26,13 +34,7 @@ foreach(dir ${SRC_SUBDIRS})
             set(MAIN_SRC ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/main.cpp)
 
             if(EXISTS ${MAIN_SRC})
-                add_executable(${TARGET_NAME} ${MAIN_SRC})
-
-                target_link_libraries(${TARGET_NAME} PRIVATE llama)
-
-                target_include_directories(${TARGET_NAME} PRIVATE
-                    ${CMAKE_CURRENT_SOURCE_DIR}/llama.cpp/include
-                )
+                add_llama_example(${TARGET_NAME} ${MAIN_SRC})
             else()
                 message(WARNING "Skip ${dir}: main.cpp not found")
             endif()
