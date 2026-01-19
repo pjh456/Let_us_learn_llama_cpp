@@ -8,16 +8,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # 2. 引入 llama.cpp 目录
 add_subdirectory(llama.cpp)
 
+# common: 官方示例中常用的工具类 (包含采样、加载模型等辅助函数)
+# file(GLOB LLAMA_COMMON_SRC llama.cpp/common/*.cpp)
+
 # 3. 添加可执行程序
-add_executable(my_app src/main.cpp)
+add_executable(main_app
+    src/main.cpp)
 
 # 4. 链接库
 # llama: 核心库 (llama.h 对应的实现)
-# common: 官方示例中常用的工具类 (包含采样、加载模型等辅助函数)
-target_link_libraries(my_app PRIVATE llama common)
+target_link_libraries(main_app PRIVATE llama)
 
 # 5. 如果需要包含 llama.cpp 内部的头文件路径
-target_include_directories(my_app PRIVATE
+target_include_directories(main_app PRIVATE
     llama.cpp/include
-    llama.cpp/common
+
+    # llama.cpp/common
 )
