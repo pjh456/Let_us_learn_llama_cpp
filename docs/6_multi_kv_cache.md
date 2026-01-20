@@ -93,8 +93,8 @@ for (int step = 0; step < 15; ++step)
 
         // 准备下一轮 decode
         common_batch_clear(batch);
-        common_batch_add(batch, tok0, n0++, {0}, true); // 此时在 batch 中索引为 0
-        common_batch_add(batch, tok1, n1++, {1}, true); // 此时在 batch 中索引为 1
+        common_batch_add(batch, tok0, n_past_0++, {0}, true); // 此时在 batch 中索引为 0
+        common_batch_add(batch, tok1, n_past_0++, {1}, true); // 此时在 batch 中索引为 1
 
         // C. 执行下一次推理
         if (llama_decode(ctx, batch) != 0)
