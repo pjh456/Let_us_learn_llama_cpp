@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 2. 引入 llama.cpp 目录
+set(LLAMA_BUILD_COMMON ON)
 add_subdirectory(llama.cpp)
 
 # 3. 添加可执行程序
@@ -16,9 +17,13 @@ file(GLOB SRC_SUBDIRS
 
 function(add_llama_example TARGET SRC)
     add_executable(${TARGET} ${SRC})
-    target_link_libraries(${TARGET} PRIVATE llama)
+    target_link_libraries(${TARGET} PRIVATE
+        llama
+        common
+    )
     target_include_directories(${TARGET} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/llama.cpp/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/llama.cpp/common
     )
 endfunction()
 
